@@ -19,7 +19,7 @@ import javax.persistence.Table;
             ),
     @NamedQuery(
             name = "getEmployeesCount",
-            query = "SELECT COUNT(e) FROM Employee AS e WHERE e.code = :code"
+            query = "SELECT COUNT(e) FROM Employee AS e"
             ),
     @NamedQuery(
             name = "checkRegisteredCode",
@@ -29,7 +29,6 @@ import javax.persistence.Table;
             name = "checkLoginCodeAndPassword",
             query = "SELECT e FROM Employee AS e WHERE e.delete_flag = 0 AND e.code = :code AND e.password = :pass"
             )
-
 })
 @Entity
 public class Employee {
@@ -38,19 +37,19 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "code", nullable =false, unique = true)
+    @Column(name = "code", nullable = false, unique = true)
     private String code;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "password", length = 64, nullable =false)
+    @Column(name = "password", length = 64, nullable = false)
     private String password;
 
     @Column(name = "admin_flag", nullable = false)
     private Integer admin_flag;
 
-    @Column(name = "created_at", nullable =false)
+    @Column(name = "created_at", nullable = false)
     private Timestamp created_at;
 
     @Column(name = "updated_at", nullable = false)
@@ -122,6 +121,4 @@ public class Employee {
     public void setDelete_flag(Integer delete_flag) {
         this.delete_flag = delete_flag;
     }
-
-
 }
