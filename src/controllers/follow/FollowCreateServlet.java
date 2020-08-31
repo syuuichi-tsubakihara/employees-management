@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import models.Employee;
 import models.Follow;
-import models.Report;
 import utils.DBUtil;
 
 /**
@@ -33,16 +32,21 @@ public class FollowCreateServlet extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String _token = (String)request.getParameter("_token");
-        if(_token != null && _token.equals(request.getSession().getId())) {
+
+
+
+
             EntityManager em = DBUtil.createEntityManager();
 
             Follow f = new Follow();
 
-            request.getSession().setAttribute("employee_id", f.getId());
 
-            f.setEmployee((Employee)request.getSession().getAttribute("login_employee"));
-            f.setReport((Report)request.getSession().getAttribute("report_id"));
+            Employee fi = em.find(Employee.class, Integer.parseInt(request.getParameter("id")));
+
+
+
+            f.setFollow((Employee)request.getSession().getAttribute("login_employee"));
+            f.setFollower(fi);
 
             em.getTransaction().begin();
             em.persist(f);
@@ -54,5 +58,5 @@ public class FollowCreateServlet extends HttpServlet {
 
             }
         }
-    }
+
 

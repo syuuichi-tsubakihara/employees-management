@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import models.Employee;
 import models.Follow;
 import utils.DBUtil;
 
@@ -28,25 +29,34 @@ public class FollowDestroyServlet extends HttpServlet {
     }
 
     /**
-     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String _token = (String)request.getParameter("_token");
-        if(_token != null && _token.equals(request.getSession().getId())) {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+
             EntityManager em = DBUtil.createEntityManager();
 
-            Follow f = em.find(Follow.class, (Integer)(request.getSession().getAttribute("follow_id")));
+
+
+            Employee e = em.find(Employee.class, (Integer.parseInt(request.getParameter("id"))));
+            Employee le = (Employee) request.getSession().getAttribute("login_employee");
+            Follow f = (Follow) em.createNamedQuery("dropFollow", Follow.class)
+                    .setParameter("femployee", e)
+                    .setParameter("login", le)
+                    .getSingleResult();
+
 
             em.getTransaction().begin();
             em.remove(f);
             em.getTransaction().commit();
             em.close();
 
-            request.getSession().removeAttribute("follow_id");
 
             response.sendRedirect(request.getContextPath() + "/reports/index");
 
     }
 
-    }
+
+
+
 }

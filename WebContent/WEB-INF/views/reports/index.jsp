@@ -25,11 +25,11 @@
                         <td class="report_title">${report.title}</td>
                         <td class="report_action"><a href="<c:url value='/reports/show?id=${report.id}' />">詳細を見る</a></td>
                         <c:choose>
-                            <c:when test="${follow.id == null }">
-                                <td class ="follow_action"><a href="<c:url value='/follow/create' />">フォローする</a></td>
+                            <c:when test="${followmap[report.employee.id] eq null }">
+                                <td class ="follow_action"><a href="<c:url value='/follow/create?id=${report.employee.id}' />">フォローする</a></td>
                             </c:when>
                             <c:otherwise>
-                                <td class ="follow_action"><a href="<c:url value='/follow/destroy' />">フォローしない</a></td>
+                                <td class ="follow_action"><a href="<c:url value='/follow/destroy?id=${report.employee.id }' />">フォローしない</a></td>
                             </c:otherwise>
                         </c:choose>
                     </tr>

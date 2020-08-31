@@ -1,7 +1,9 @@
 package controllers.reports;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.servlet.RequestDispatcher;
@@ -11,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import models.Employee;
+import models.Follow;
 import models.Report;
 import utils.DBUtil;
 
@@ -41,16 +45,37 @@ public class ReportsIndexServlet extends HttpServlet {
         } catch(Exception e) {
             page = 1;
         }
+
         List<Report> reports = em.createNamedQuery("getAllReports", Report.class)
                                   .setFirstResult(15 * (page - 1))
                                   .setMaxResults(15)
                                   .getResultList();
+
+        Employee e = new Employee();
+
+        e = (Employee) request.getSession().getAttribute("login_employee");
+
+        List<Follow> follow =em.createNamedQuery("getfollows", Follow.class)
+                .setParameter("login", e)
+                .getResultList();
+
 
         long reports_count = (long)em.createNamedQuery("getReportsCount", Long.class)
                                      .getSingleResult();
 
         em.close();
 
+
+        Map<Integer, Employee> followmap = new HashMap<>();
+
+        for(Follow f : follow) {
+            followmap.put(f.getFollower().getId(), f.getFollower());
+        }
+
+
+
+        request.setAttribute("followmap", followmap);
+        request.setAttribute("_token", request.getSession().getId());
         request.setAttribute("reports", reports);
         request.setAttribute("reports_count", reports_count);
         request.setAttribute("page", page);

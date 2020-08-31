@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import models.Follow;
+import models.Employee;
+import models.Report;
 import utils.DBUtil;
 
 /**
@@ -41,18 +42,25 @@ public class FollowIndex extends HttpServlet {
         } catch(Exception e) {
             page = 1;
         }
-        List<Follow> follow = em.createNamedQuery("getAllfollow", Follow.class)
-                                  .setFirstResult(15 * (page - 1))
-                                  .setMaxResults(15)
-                                  .getResultList();
 
-        long follow_count = (long)em.createNamedQuery("getfollowCount", Long.class)
+        Employee e = new Employee();
+        e = (Employee) request.getSession().getAttribute("login_employee");
+
+        List<Report> reports = em.createNamedQuery("getAllfollowReport", Report.class)
+                    .setParameter("login", e)
+                    .setFirstResult(15 * (page - 1))
+                    .setMaxResults(15)
+                    .getResultList();
+
+
+        long reports_count = (long)em.createNamedQuery("getMyfollowReportsCount", Long.class)
+                                     .setParameter("login", e)
                                      .getSingleResult();
 
         em.close();
 
-        request.setAttribute("follow", follow);
-        request.setAttribute("follow_count", follow_count);
+        request.setAttribute("reports", reports);
+        request.setAttribute("reports_count", reports_count);
         request.setAttribute("page", page);
         if(request.getSession().getAttribute("flush") != null) {
             request.setAttribute("flush", request.getSession().getAttribute("flush"));
